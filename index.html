@@ -1,369 +1,212 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Ilya Skaryna</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="robots" content="index, follow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
-    :root{
-      --pad: 32px;
-      --gap: 24px;
-      --header-h: 72px;
-      --bg: #fff;
-      --fg: #000;
-      --muted: rgba(0,0,0,.55);
-      --overlay: rgba(0,0,0,.55);
-      --radius: 18px;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    *{ box-sizing:border-box; margin:0; padding:0; }
-    body{
-      font-family:-apple-system,BlinkMacSystemFont,Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
-      background:var(--bg);
-      color:var(--fg);
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, Inter, system-ui, Arial, sans-serif;
+      background: #fff;
+      color: #000;
     }
 
-    /* Header */
-    header{
+    /* ===== HEADER ===== */
+    header {
       position: sticky;
       top: 0;
-      z-index: 20;
-      height: calc(var(--header-h) + env(safe-area-inset-top));
-      padding:
-        calc(16px + env(safe-area-inset-top))
-        var(--pad)
-        16px
-        var(--pad);
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      background: rgba(255,255,255,.92);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(0,0,0,.06);
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 32px;
+      border-bottom: 1px solid rgba(0,0,0,.08);
+      background: #fff;
     }
 
-    .label{
+    .label {
       font-size: 12px;
       letter-spacing: .14em;
       text-transform: uppercase;
-      color: var(--muted);
-      user-select:none;
-      white-space:nowrap;
+      color: rgba(0,0,0,.55);
+      cursor: default;
     }
-    .name{
+
+    .btn {
+      background: none;
+      border: none;
+      font: inherit;
+      padding: 0;
+      cursor: pointer;
+      color: rgba(0,0,0,.55);
+    }
+
+    .btn:hover {
+      color: #000;
+    }
+
+    .name {
       font-weight: 700;
-      letter-spacing: .10em;
+      letter-spacing: .12em;
       text-transform: uppercase;
-      user-select:none;
-      white-space:nowrap;
-    }
-    .btn{
-      appearance:none;
-      border:0;
-      background:transparent;
-      padding: 10px 12px;
-      margin: -10px -12px; /* bigger tap area without changing layout */
-      border-radius: 12px;
-      cursor:pointer;
-    }
-    .btn:active{ background: rgba(0,0,0,.05); }
-
-    /* Main layout */
-    main{
-      padding: 28px var(--pad) calc(40px + env(safe-area-inset-bottom)) var(--pad);
+      font-size: 14px;
     }
 
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: var(--gap);
+    .right {
+      display: flex;
+      align-items: center;
+      gap: 24px;
     }
 
-    .tile{
-      position:relative;
-      overflow:hidden;
-      border-radius: var(--radius);
-      background:#f0f0f0;
-      cursor:pointer;
+    /* ===== GRID ===== */
+    main {
+      padding: 32px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .tile {
+      position: relative;
       aspect-ratio: 1 / 1;
-      outline: none;
-      -webkit-tap-highlight-color: transparent;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #f0f0f0;
+      cursor: pointer;
     }
 
-    .tile img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
-      transform: scale(1);
-      transition: transform .35s ease;
+    .tile img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 
-    .tile:hover img{ transform: scale(1.04); }
-
-    .overlay{
-      position:absolute;
-      inset:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding: 16px;
-      text-align:center;
-      background: var(--overlay);
-      color:#fff;
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,.55);
+      color: #fff;
       font-size: 13px;
-      letter-spacing:.08em;
+      letter-spacing: .08em;
       text-transform: uppercase;
-      opacity:0;
-      transition: opacity .25s ease;
-      pointer-events:none;
+      opacity: 0;
+      transition: opacity .2s ease;
     }
 
-    .tile:hover .overlay{ opacity:1; }
+    .tile:hover .overlay {
+      opacity: 1;
+    }
 
-    /* Touch devices: show title always but subtle (no hover) */
-    @media (hover: none){
-      .overlay{
-        opacity: 1;
-        background: linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,.05) 55%, rgba(0,0,0,0) 80%);
-        align-items: flex-end;
-        justify-content: flex-start;
-        font-size: 12px;
-        letter-spacing: .06em;
+    /* ===== ABOUT MODAL ===== */
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      background: rgba(0,0,0,.4);
+    }
+
+    .modal.active {
+      display: block;
+    }
+
+    .panel {
+      position: absolute;
+      inset: 0;
+      background: #fff;
+      padding: 32px;
+    }
+
+    .panel-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(0,0,0,.08);
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
       }
     }
 
-    /* Responsive breakpoints */
-    @media (max-width: 980px){
-      :root{ --pad: 24px; --gap: 18px; }
-      .grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    @media (max-width: 520px) {
+      header {
+        padding: 16px;
+      }
+      main {
+        padding: 16px;
+      }
+      .grid {
+        grid-template-columns: 1fr;
+      }
     }
-    @media (max-width: 520px){
-      :root{ --pad: 16px; --gap: 14px; --header-h: 64px; --radius: 16px; }
-      .grid{ grid-template-columns: 1fr; }
-      .name{ letter-spacing: .08em; font-size: 14px; }
-      .label{ font-size: 11px; }
-    }
-
-    /* Modals (About + Lightbox) */
-    .modal{
-      position: fixed;
-      inset: 0;
-      z-index: 50;
-      display:none;
-    }
-    .modal.active{ display:block; }
-
-    .backdrop{
-      position:absolute;
-      inset:0;
-      background: rgba(0,0,0,.40);
-    }
-
-    .panel{
-      position:absolute;
-      inset: 0;
-      background: #fff;
-      padding:
-        calc(22px + env(safe-area-inset-top))
-        var(--pad)
-        calc(22px + env(safe-area-inset-bottom))
-        var(--pad);
-      overflow:auto;
-    }
-
-    .panel-top{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding-bottom: 14px;
-      border-bottom: 1px solid rgba(0,0,0,.06);
-      margin-bottom: 18px;
-    }
-
-    .close{
-      font-size: 14px;
-      letter-spacing:.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    .about-text{
-      max-width: 520px;
-      font-size: 14px;
-      line-height: 1.7;
-      color: rgba(0,0,0,.8);
-    }
-    .links{
-      margin-top: 18px;
-      display:flex;
-      flex-wrap:wrap;
-      gap: 12px 16px;
-    }
-    .links a{
-      font-size: 13px;
-      text-decoration:none;
-      color: rgba(0,0,0,.7);
-      letter-spacing:.04em;
-    }
-    .links a:hover{ color: rgba(0,0,0,1); }
-
-    /* Lightbox image */
-    .lightbox{
-      position:absolute;
-      inset:0;
-      background: #0b0b0c;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:
-        calc(14px + env(safe-area-inset-top))
-        var(--pad)
-        calc(14px + env(safe-area-inset-bottom))
-        var(--pad);
-    }
-    .lightbox img{
-      max-width: 100%;
-      max-height: 100%;
-      border-radius: 14px;
-    }
-    .lightbox-ui{
-      position:absolute;
-      top: calc(14px + env(safe-area-inset-top));
-      left: 0;
-      right: 0;
-      padding: 0 var(--pad);
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      color: rgba(255,255,255,.85);
-    }
-    .lightbox-title{
-      font-size: 12px;
-      letter-spacing:.12em;
-      text-transform: uppercase;
-      opacity:.85;
-      max-width: 70%;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .lightbox-close{
-      color: rgba(255,255,255,.85);
-    }
-    .lightbox-close:active{ background: rgba(255,255,255,.08); }
   </style>
 </head>
 
 <body>
-  <header>
-    <div class="label">ARTIST</div>
-    <button class="btn label" onclick="openAbout()" aria-label="Open About">ABOUT</button>
+
+<header>
+  <div class="label">ARTIST</div>
+
+  <div class="right">
+    <button class="btn label" onclick="openAbout()">ABOUT</button>
     <div class="name">ILYA SKARYNA</div>
-  </header>
-
-  <main>
-    <div class="grid" id="grid">
-      <!-- Replace images + titles below -->
-      <button class="tile" onclick="openProject(
-        'PROJECT 01',
-        'img/project-01-cover.png',
-        []
-      )">
-        <img src="img/project-01-cover.png" alt="Project 01 cover" loading="lazy">
-       <div class="overlay">PROJECT 01</div>
-      </button>
-
-      <button class="tile" onclick="openLightbox('img/work-02.webp','PROJECT NAME 02')" aria-label="Open work 02">
-        <img src="img/work-02.webp" alt="Project 02" loading="lazy" />
-        <div class="overlay">PROJECT NAME 02</div>
-      </button>
-
-      <button class="tile" onclick="openLightbox('img/work-03.webp','PROJECT NAME 03')" aria-label="Open work 03">
-        <img src="img/work-03.webp" alt="Project 03" loading="lazy" />
-        <div class="overlay">PROJECT NAME 03</div>
-      </button>
-    </div>
-  </main>
-
-  <!-- ABOUT MODAL -->
-  <div class="modal" id="aboutModal" role="dialog" aria-modal="true" aria-label="About">
-    <div class="backdrop" onclick="closeAbout()"></div>
-    <div class="panel">
-      <div class="panel-top">
-        <div class="name" style="font-size:14px; letter-spacing:.10em;">ILYA SKARYNA</div>
-        <button class="btn close" onclick="closeAbout()">CLOSE</button>
-      </div>
-
-      <div class="about-text">
-        Artist.
-      </div>
-
-      <div class="links">
-        <a href="mailto:your@email.com">Email</a>
-        <a href="https://artstation.com" target="_blank" rel="noreferrer">ArtStation</a>
-        <a href="https://linkedin.com" target="_blank" rel="noreferrer">LinkedIn</a>
-      </div>
-    </div>
   </div>
+</header>
 
-  <!-- LIGHTBOX -->
-  <div class="modal" id="lightboxModal" role="dialog" aria-modal="true" aria-label="Image viewer">
-    <div class="backdrop" onclick="closeLightbox()"></div>
-    <div class="lightbox">
-      <div class="lightbox-ui">
-        <div class="lightbox-title" id="lightboxTitle">PROJECT</div>
-        <button class="btn close lightbox-close" onclick="closeLightbox()">CLOSE</button>
-      </div>
-      <img id="lightboxImg" alt="" />
+<main>
+  <div class="grid">
+
+    <!-- PROJECT 01 -->
+    <div class="tile">
+      <img src="img/project-01-cover.webp" alt="Project 01">
+      <div class="overlay">PROJECT 01</div>
     </div>
+
   </div>
+</main>
 
-  <script>
-    const about = document.getElementById('aboutModal');
-    const lightbox = document.getElementById('lightboxModal');
-    const lightboxImg = document.getElementById('lightboxImg');
-    const lightboxTitle = document.getElementById('lightboxTitle');
+<!-- ABOUT -->
+<div class="modal" id="about">
+  <div class="panel">
+    <div class="panel-top">
+      <div class="name">ILYA SKARYNA</div>
+      <button class="btn label" onclick="closeAbout()">CLOSE</button>
+    </div>
 
-    function lockScroll(lock){
-      document.body.style.overflow = lock ? 'hidden' : '';
-    }
+    <p>Artist.</p>
+  </div>
+</div>
 
-    function openAbout(){
-      about.classList.add('active');
-      lockScroll(true);
-    }
-    function closeAbout(){
-      about.classList.remove('active');
-      lockScroll(false);
-    }
+<script>
+  const about = document.getElementById('about');
 
-    function openLightbox(src, title){
-      lightboxTitle.textContent = title || '';
-      lightboxImg.src = src;
-      lightboxImg.alt = title || '';
-      lightbox.classList.add('active');
-      lockScroll(true);
-    }
-    function closeLightbox(){
-      lightbox.classList.remove('active');
-      lockScroll(false);
-      // free memory on mobile
-      lightboxImg.src = '';
-      lightboxImg.alt = '';
-    }
+  function openAbout() {
+    about.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
 
-    // ESC closes modals
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        if (lightbox.classList.contains('active')) closeLightbox();
-        if (about.classList.contains('active')) closeAbout();
-      }
-    });
-  </script>
+  function closeAbout() {
+    about.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+</script>
+
 </body>
 </html>
