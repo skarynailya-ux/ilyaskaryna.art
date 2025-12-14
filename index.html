@@ -161,14 +161,29 @@
       .grid {
         grid-template-columns: 1fr;
       }
-    }
+
+      /* === БУДУЕЦЦА PULSE === */
+.building{
+  color:#d00000;
+  opacity:.9;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse{
+  0%, 100% { opacity: .45; }
+  50%      { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .building{ animation: none; opacity: .9; }
+}
   </style>
 </head>
 
 <body>
 
 <header>
-  <div class="label">ARTIST</div>
+  <div class="label building">БУДУЕЦЦА</div>
 
   <div class="right">
     <button class="btn label" onclick="openAbout()">ABOUT</button>
