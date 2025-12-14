@@ -262,16 +262,20 @@
 <body>
   <header>
     <div class="label">ARTIST</div>
-    <div class="name">ILYA SKARYNA</div>
     <button class="btn label" onclick="openAbout()" aria-label="Open About">ABOUT</button>
+    <div class="name">ILYA SKARYNA</div>
   </header>
 
   <main>
     <div class="grid" id="grid">
       <!-- Replace images + titles below -->
-      <button class="tile" onclick="openLightbox('img/work-01.webp','PROJECT NAME 01')" aria-label="Open work 01">
-        <img src="img/work-01.webp" alt="Project 01" loading="lazy" />
-        <div class="overlay">PROJECT NAME 01</div>
+      <button class="tile" onclick="openProject(
+        'PROJECT 01',
+        'img/project-01-cover.png',
+        []
+      )">
+        <img src="img/project-01-cover.png" alt="Project 01 cover" loading="lazy">
+       <div class="overlay">PROJECT 01</div>
       </button>
 
       <button class="tile" onclick="openLightbox('img/work-02.webp','PROJECT NAME 02')" aria-label="Open work 02">
