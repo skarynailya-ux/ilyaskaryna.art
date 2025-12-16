@@ -5,37 +5,45 @@
   <title>Ilya Skaryna</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
-  <!-- Anton font -->
+  <!-- Anton -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --pad: 32px;
-      --gap: 18px;
+      --pad: 28px;
+      --gap: 16px;
       --radius: 18px;
 
-      /* light */
+      /* LIGHT */
       --bg: #ffffff;
-      --fg: #000000;
+      --fg: #111111;
       --muted: rgba(0,0,0,.55);
-      --line: rgba(0,0,0,.08);
-      --tile: #f0f0f0;
-      --overlay: rgba(0,0,0,.55);
-      --header-bg: rgba(255,255,255,.92);
+      --line: rgba(0,0,0,.10);
+
+      --tile-bg: #f2f2f2;
+      --tile-text: rgba(255,255,255,.92);
+
+      /* effects */
+      --blur: 7px;
+      --base-dim: .92;
+      --hover-bright: 1.12;
+      --overlay-bg: rgba(255,255,255,.22); /* “осветление” */
     }
 
-    /* dark — auto by system */
     @media (prefers-color-scheme: dark){
       :root{
         --bg: #0b0b0c;
-        --fg: #ffffff;
-        --muted: rgba(255,255,255,.6);
+        --fg: #f5f5f5;
+        --muted: rgba(255,255,255,.55);
         --line: rgba(255,255,255,.12);
-        --tile: rgba(255,255,255,.08);
-        --overlay: rgba(0,0,0,.55);
-        --header-bg: rgba(11,11,12,.75);
+
+        --tile-bg: rgba(255,255,255,.07);
+        --tile-text: rgba(255,255,255,.92);
+
+        --overlay-bg: rgba(255,255,255,.14); /* мягче на тёмном */
+        --base-dim: .95;
       }
     }
 
@@ -59,42 +67,46 @@
       justify-content:space-between;
       padding: 18px var(--pad);
       border-bottom: 1px solid var(--line);
-      background: var(--header-bg);
+      background: rgba(0,0,0,0);
       backdrop-filter: blur(10px);
+    }
+    @media (prefers-color-scheme: light){
+      header{ background: rgba(255,255,255,.88); }
+    }
+    @media (prefers-color-scheme: dark){
+      header{ background: rgba(11,11,12,.72); }
     }
 
     .label{
       font-size: 12px;
-      letter-spacing: .14em;
+      letter-spacing: .18em;
       text-transform: uppercase;
-      color: var(--muted);
       user-select:none;
       white-space:nowrap;
     }
 
-    /* БУДУЕЦЦА */
     .building{
       color:#d00000;
-      animation: pulse 1.3s ease-in-out infinite;
+      animation: pulse 1.6s ease-in-out infinite;
       display:inline-block;
     }
     @keyframes pulse{
-      0%,100%{ opacity:.55; transform:scale(1); }
-      50%{ opacity:1; transform:scale(1.05); }
+      0%,100%{ opacity:.45; }
+      50%{ opacity: 1; }
     }
 
     .right{
       display:flex;
-      align-items:center;
+      align-items:center; /* ABOUT по центральной линии имени */
       gap: 22px;
     }
 
-    /* ABOUT — smaller */
     .about-btn{
       appearance:none;
       border:0;
       background:none;
       cursor:pointer;
+
       font-size: 11px;
       letter-spacing: .14em;
       text-transform: uppercase;
@@ -104,7 +116,6 @@
     }
     .about-btn:hover{ color: var(--fg); }
 
-    /* NAME — big Anton */
     .name-link{
       font-family: "Anton", system-ui, Arial, sans-serif;
       font-size: 32px;
@@ -118,17 +129,14 @@
 
     /* MAIN */
     main{
-      padding: 28px var(--pad) 56px var(--pad);
-      display:flex;
-      justify-content:flex-start;
+      padding: 26px var(--pad) 56px var(--pad);
     }
 
-    /* GRID: 4 columns on desktop */
     .grid{
       width: 100%;
-      max-width: 1280px;            /* чтобы плитки не были огромными */
+      max-width: 1280px; /* плитки не огромные */
       display:grid;
-      grid-template-columns: repeat(4, minmax(0,1fr));
+      grid-template-columns: repeat(4, minmax(0,1fr)); /* ПК: 4 */
       gap: var(--gap);
     }
 
@@ -136,57 +144,72 @@
       position:relative;
       overflow:hidden;
       border-radius: var(--radius);
-      background: var(--tile);
+      background: var(--tile-bg);
       aspect-ratio: 1 / 1;
       border:0;
       padding:0;
       cursor:pointer;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    /* Blur preview */
+    /* КАРТИНКА: ВСЕГДА BLUR */
     .tile img{
       width:100%;
       height:100%;
       object-fit:cover;
       display:block;
-      filter: blur(6px) brightness(.92);
-      transform: scale(1.06);
-      transition: filter .35s ease, transform .35s ease;
+
+      filter: blur(var(--blur)) brightness(var(--base-dim));
+      transform: scale(1.08);
+      transition: filter .25s ease, transform .25s ease;
     }
 
+    /* HOVER: BLUR ОСТАЁТСЯ, но ОСВЕТЛЯЕМ */
     .tile:hover img{
-      filter: blur(0) brightness(1);
-      transform: scale(1.02);
+      filter: blur(var(--blur)) brightness(var(--hover-bright));
+      transform: scale(1.06);
     }
 
+    /* Осветляющая вуаль (только при hover) */
+    .tile::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: var(--overlay-bg);
+      opacity: 0;
+      transition: opacity .2s ease;
+      pointer-events:none;
+    }
+    .tile:hover::after{ opacity: 1; }
+
+    /* Текст */
     .overlay{
       position:absolute;
       inset:0;
       display:flex;
       align-items:center;
       justify-content:center;
-      background: var(--overlay);
-      color:#fff;
-      font-size:12px;
-      letter-spacing:.10em;
+
+      color: var(--tile-text);
+      font-size: 12px;
+      letter-spacing: .14em;
       text-transform: uppercase;
+
       opacity:0;
       transition: opacity .2s ease;
       pointer-events:none;
+
+      text-shadow: 0 2px 18px rgba(0,0,0,.35);
     }
     .tile:hover .overlay{ opacity:1; }
 
-    /* Touch: show caption always */
+    /* Touch devices: показываем подпись всегда (без hover) */
     @media (hover:none){
+      .tile::after{ opacity: 1; }      /* лёгкое осветление всегда */
       .overlay{
         opacity:1;
-        background: linear-gradient(to top,
-          rgba(0,0,0,.55),
-          rgba(0,0,0,.1) 60%,
-          rgba(0,0,0,0)
-        );
-        align-items:flex-end;
         justify-content:flex-start;
+        align-items:flex-end;
         padding: 14px;
       }
     }
@@ -241,16 +264,16 @@
       opacity:.85;
     }
 
-    /* Responsive */
+    /* RESPONSIVE */
     @media (max-width: 1100px){
-      :root{ --pad:24px; --gap:16px; }
+      :root{ --pad:24px; --gap:14px; }
       .grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
       .name-link{ font-size: 28px; }
     }
 
     /* Mobile: 2 columns */
     @media (max-width: 600px){
-      :root{ --pad:16px; --gap:14px; --radius:16px; }
+      :root{ --pad:16px; --gap:12px; --radius:16px; }
       header{ padding: 16px var(--pad); }
       main{ padding: 18px var(--pad) 40px var(--pad); }
       .grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
@@ -258,13 +281,18 @@
       .name-link{ font-size: 24px; }
       .about-btn{ font-size: 10px; }
     }
+
+    /* Accessibility: reduce motion */
+    @media (prefers-reduced-motion: reduce){
+      .building{ animation: none; opacity: 1; }
+      .tile img, .tile::after, .overlay{ transition: none; }
+    }
   </style>
 </head>
 
 <body>
   <header>
     <div class="label building">БУДУЕЦЦА</div>
-
     <div class="right">
       <button class="about-btn" onclick="openAbout()">ABOUT</button>
       <a class="name-link" href="/">ILYA SKARYNA</a>
@@ -273,36 +301,50 @@
 
   <main>
     <div class="grid">
-      <!-- reverse order: 05 -> 01 -->
-      <button class="tile">
-        <img src="img/project-05-cover.webp" alt="Project 05">
-        <div class="overlay">PROJECT 05</div>
-      </button>
 
-      <button class="tile">
-        <img src="img/project-04-cover.webp" alt="Project 04">
-        <div class="overlay">PROJECT 04</div>
-      </button>
+      <!-- 30 TILES (preview layout) -->
+      <button class="tile"><img src="img/project-05-cover.webp" alt="Project 30"><div class="overlay">PROJECT 30</div></button>
+      <button class="tile"><img src="img/project-04-cover.webp" alt="Project 29"><div class="overlay">PROJECT 29</div></button>
+      <button class="tile"><img src="img/project-03-cover.webp" alt="Project 28"><div class="overlay">PROJECT 28</div></button>
+      <button class="tile"><img src="img/project-02-cover.webp" alt="Project 27"><div class="overlay">PROJECT 27</div></button>
 
-      <button class="tile">
-        <img src="img/project-03-cover.webp" alt="Project 03">
-        <div class="overlay">PROJECT 03</div>
-      </button>
+      <button class="tile"><img src="img/project-01-cover.webp" alt="Project 26"><div class="overlay">PROJECT 26</div></button>
+      <button class="tile"><img src="img/project-05-cover.webp" alt="Project 25"><div class="overlay">PROJECT 25</div></button>
+      <button class="tile"><img src="img/project-04-cover.webp" alt="Project 24"><div class="overlay">PROJECT 24</div></button>
+      <button class="tile"><img src="img/project-03-cover.webp" alt="Project 23"><div class="overlay">PROJECT 23</div></button>
 
-      <button class="tile">
-        <img src="img/project-02-cover.webp" alt="Project 02">
-        <div class="overlay">PROJECT 02</div>
-      </button>
+      <button class="tile"><img src="img/project-02-cover.webp" alt="Project 22"><div class="overlay">PROJECT 22</div></button>
+      <button class="tile"><img src="img/project-01-cover.webp" alt="Project 21"><div class="overlay">PROJECT 21</div></button>
+      <button class="tile"><img src="img/project-05-cover.webp" alt="Project 20"><div class="overlay">PROJECT 20</div></button>
+      <button class="tile"><img src="img/project-04-cover.webp" alt="Project 19"><div class="overlay">PROJECT 19</div></button>
 
-      <button class="tile">
-        <img src="img/project-01-cover.webp" alt="Project 01">
-        <div class="overlay">PROJECT 01</div>
-      </button>
+      <button class="tile"><img src="img/project-03-cover.webp" alt="Project 18"><div class="overlay">PROJECT 18</div></button>
+      <button class="tile"><img src="img/project-02-cover.webp" alt="Project 17"><div class="overlay">PROJECT 17</div></button>
+      <button class="tile"><img src="img/project-01-cover.webp" alt="Project 16"><div class="overlay">PROJECT 16</div></button>
+      <button class="tile"><img src="img/project-05-cover.webp" alt="Project 15"><div class="overlay">PROJECT 15</div></button>
+
+      <button class="tile"><img src="img/project-04-cover.webp" alt="Project 14"><div class="overlay">PROJECT 14</div></button>
+      <button class="tile"><img src="img/project-03-cover.webp" alt="Project 13"><div class="overlay">PROJECT 13</div></button>
+      <button class="tile"><img src="img/project-02-cover.webp" alt="Project 12"><div class="overlay">PROJECT 12</div></button>
+      <button class="tile"><img src="img/project-01-cover.webp" alt="Project 11"><div class="overlay">PROJECT 11</div></button>
+
+      <button class="tile"><img src="img/project-05-cover.webp" alt="Project 10"><div class="overlay">PROJECT 10</div></button>
+      <button class="tile"><img src="img/project-04-cover.webp" alt="Project 09"><div class="overlay">PROJECT 09</div></button>
+      <button class="tile"><img src="img/project-03-cover.webp" alt="Project 08"><div class="overlay">PROJECT 08</div></button>
+      <button class="tile"><img src="img/project-02-cover.webp" alt="Project 07"><div class="overlay">PROJECT 07</div></button>
+
+      <button class="tile"><img src="img/project-01-cover.webp" alt="Project 06"><div class="overlay">PROJECT 06</div></button>
+      <button class="tile"><img src="img/project-05-cover.webp" alt="Project 05"><div class="overlay">PROJECT 05</div></button>
+      <button class="tile"><img src="img/project-04-cover.webp" alt="Project 04"><div class="overlay">PROJECT 04</div></button>
+      <button class="tile"><img src="img/project-03-cover.webp" alt="Project 03"><div class="overlay">PROJECT 03</div></button>
+      <button class="tile"><img src="img/project-02-cover.webp" alt="Project 02"><div class="overlay">PROJECT 02</div></button>
+      <button class="tile"><img src="img/project-01-cover.webp" alt="Project 01"><div class="overlay">PROJECT 01</div></button>
+
     </div>
   </main>
 
   <!-- ABOUT -->
-  <div class="modal" id="aboutModal">
+  <div class="modal" id="aboutModal" role="dialog" aria-modal="true" aria-label="About">
     <div class="backdrop" onclick="closeAbout()"></div>
     <div class="panel">
       <div class="panel-top">
