@@ -13,7 +13,7 @@
   <style>
     :root{
       --pad: 32px;
-      --gap: 24px;
+      --gap: 18px;
       --radius: 18px;
 
       /* light */
@@ -85,17 +85,16 @@
 
     .right{
       display:flex;
-      align-items:center; /* КЛЮЧЕВО для выравнивания ABOUT */
+      align-items:center;
       gap: 22px;
     }
 
-    /* ABOUT — меньше */
+    /* ABOUT — smaller */
     .about-btn{
       appearance:none;
       border:0;
       background:none;
       cursor:pointer;
-
       font-size: 11px;
       letter-spacing: .14em;
       text-transform: uppercase;
@@ -105,11 +104,11 @@
     }
     .about-btn:hover{ color: var(--fg); }
 
-    /* NAME — КРУПНО, ПЛОТНО */
+    /* NAME — big Anton */
     .name-link{
       font-family: "Anton", system-ui, Arial, sans-serif;
-      font-size: 32px;      /* КРУПНЕЕ */
-      letter-spacing: .04em;/* МЕНЬШЕ расстояние */
+      font-size: 32px;
+      letter-spacing: .04em;
       line-height: 1;
       text-transform: uppercase;
       color: var(--fg);
@@ -119,12 +118,17 @@
 
     /* MAIN */
     main{
-      padding: 32px var(--pad) 48px var(--pad);
+      padding: 28px var(--pad) 56px var(--pad);
+      display:flex;
+      justify-content:flex-start;
     }
 
+    /* GRID: 4 columns on desktop */
     .grid{
+      width: 100%;
+      max-width: 1280px;            /* чтобы плитки не были огромными */
       display:grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
+      grid-template-columns: repeat(4, minmax(0,1fr));
       gap: var(--gap);
     }
 
@@ -139,14 +143,21 @@
       cursor:pointer;
     }
 
+    /* Blur preview */
     .tile img{
       width:100%;
       height:100%;
       object-fit:cover;
       display:block;
-      transition: transform .35s ease;
+      filter: blur(6px) brightness(.92);
+      transform: scale(1.06);
+      transition: filter .35s ease, transform .35s ease;
     }
-    .tile:hover img{ transform: scale(1.04); }
+
+    .tile:hover img{
+      filter: blur(0) brightness(1);
+      transform: scale(1.02);
+    }
 
     .overlay{
       position:absolute;
@@ -156,8 +167,8 @@
       justify-content:center;
       background: var(--overlay);
       color:#fff;
-      font-size:13px;
-      letter-spacing:.08em;
+      font-size:12px;
+      letter-spacing:.10em;
       text-transform: uppercase;
       opacity:0;
       transition: opacity .2s ease;
@@ -165,6 +176,7 @@
     }
     .tile:hover .overlay{ opacity:1; }
 
+    /* Touch: show caption always */
     @media (hover:none){
       .overlay{
         opacity:1;
@@ -176,7 +188,6 @@
         align-items:flex-end;
         justify-content:flex-start;
         padding: 14px;
-        font-size:12px;
       }
     }
 
@@ -230,20 +241,22 @@
       opacity:.85;
     }
 
-    /* RESPONSIVE */
-    @media (max-width: 980px){
-      :root{ --pad:24px; --gap:18px; }
-      .grid{ grid-template-columns: repeat(2,1fr); }
-      .name-link{ font-size:28px; }
+    /* Responsive */
+    @media (max-width: 1100px){
+      :root{ --pad:24px; --gap:16px; }
+      .grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+      .name-link{ font-size: 28px; }
     }
 
-    @media (max-width: 520px){
-      :root{ --pad:16px; --gap:14px; }
-      .grid{ grid-template-columns: 1fr; }
-      header{ padding:16px var(--pad); }
-      .right{ gap:14px; }
-      .name-link{ font-size:26px; }
-      .about-btn{ font-size:10px; }
+    /* Mobile: 2 columns */
+    @media (max-width: 600px){
+      :root{ --pad:16px; --gap:14px; --radius:16px; }
+      header{ padding: 16px var(--pad); }
+      main{ padding: 18px var(--pad) 40px var(--pad); }
+      .grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .right{ gap: 14px; }
+      .name-link{ font-size: 24px; }
+      .about-btn{ font-size: 10px; }
     }
   </style>
 </head>
@@ -260,6 +273,27 @@
 
   <main>
     <div class="grid">
+      <!-- reverse order: 05 -> 01 -->
+      <button class="tile">
+        <img src="img/project-05-cover.webp" alt="Project 05">
+        <div class="overlay">PROJECT 05</div>
+      </button>
+
+      <button class="tile">
+        <img src="img/project-04-cover.webp" alt="Project 04">
+        <div class="overlay">PROJECT 04</div>
+      </button>
+
+      <button class="tile">
+        <img src="img/project-03-cover.webp" alt="Project 03">
+        <div class="overlay">PROJECT 03</div>
+      </button>
+
+      <button class="tile">
+        <img src="img/project-02-cover.webp" alt="Project 02">
+        <div class="overlay">PROJECT 02</div>
+      </button>
+
       <button class="tile">
         <img src="img/project-01-cover.webp" alt="Project 01">
         <div class="overlay">PROJECT 01</div>
