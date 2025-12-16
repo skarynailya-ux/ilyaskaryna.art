@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Ilya Skaryna</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
 <!-- Anton -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,9 +11,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
 
 <style>
-/* =====================
-   THEME (AUTO SYSTEM)
-===================== */
 :root{
   --pad: 24px;
   --gap: 14px;
@@ -36,7 +33,6 @@
     --fg: #f5f5f5;
     --muted: rgba(255,255,255,.55);
     --line: rgba(255,255,255,.14);
-
     --overlay-light: rgba(255,255,255,.16);
   }
 }
@@ -49,9 +45,7 @@ body{
   font-family:-apple-system,BlinkMacSystemFont,Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
 }
 
-/* =====================
-   HEADER
-===================== */
+/* HEADER */
 header{
   position:sticky;
   top:0;
@@ -75,13 +69,14 @@ header{
   font-size:12px;
   letter-spacing:.18em;
   text-transform:uppercase;
+  user-select:none;
+  white-space:nowrap;
 }
 
 .building{
   color:#d00000;
   animation:pulse 1.6s ease-in-out infinite;
 }
-
 @keyframes pulse{
   0%,100%{opacity:.45}
   50%{opacity:1}
@@ -96,10 +91,12 @@ header{
 .about{
   font-size:11px;
   letter-spacing:.14em;
+  text-transform:uppercase;
   background:none;
   border:0;
   color:var(--muted);
   cursor:pointer;
+  line-height:1;
 }
 .about:hover{ color:var(--fg); }
 
@@ -110,11 +107,10 @@ header{
   text-transform:uppercase;
   text-decoration:none;
   color:var(--fg);
+  line-height:1;
 }
 
-/* =====================
-   MAIN GRID
-===================== */
+/* MAIN GRID */
 main{
   padding:24px var(--pad) 48px;
 }
@@ -122,7 +118,7 @@ main{
 .grid{
   width:100%;
   display:grid;
-  grid-template-columns:repeat(4,1fr);
+  grid-template-columns:repeat(4, minmax(0,1fr));
   gap:var(--gap);
 }
 
@@ -134,6 +130,8 @@ main{
   border:0;
   padding:0;
   cursor:pointer;
+  background: rgba(128,128,128,.08);
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* IMAGE — BLUR ALWAYS */
@@ -142,18 +140,18 @@ main{
   height:100%;
   object-fit:cover;
   display:block;
-  filter:blur(var(--blur)) brightness(.95);
-  transform:scale(1.08);
-  transition:filter .25s ease, transform .25s ease;
+  filter: blur(var(--blur)) brightness(.95);
+  transform: scale(1.08);
+  transition: filter .25s ease, transform .25s ease;
 }
 
 /* HOVER: BLUR STAYS, IMAGE LIGHTENS */
 .tile:hover img{
-  filter:blur(var(--blur)) brightness(1.15);
-  transform:scale(1.05);
+  filter: blur(var(--blur)) brightness(1.15);
+  transform: scale(1.05);
 }
 
-/* LIGHT OVERLAY */
+/* LIGHT OVERLAY ON HOVER */
 .tile::after{
   content:"";
   position:absolute;
@@ -161,6 +159,7 @@ main{
   background:var(--overlay-light);
   opacity:0;
   transition:opacity .2s ease;
+  pointer-events:none;
 }
 .tile:hover::after{ opacity:1; }
 
@@ -177,6 +176,7 @@ main{
   text-transform:uppercase;
   opacity:0;
   transition:opacity .2s ease;
+  pointer-events:none;
   text-shadow:0 2px 18px rgba(0,0,0,.35);
 }
 .tile:hover .overlay{ opacity:1; }
@@ -192,60 +192,158 @@ main{
   }
 }
 
-/* =====================
-   RESPONSIVE
-===================== */
+/* RESPONSIVE */
 @media (max-width:900px){
   .grid{ grid-template-columns:repeat(3,1fr); }
 }
-
 @media (max-width:600px){
   :root{ --pad:16px; --gap:12px; }
   .grid{ grid-template-columns:repeat(2,1fr); }
   .name{ font-size:24px; }
 }
 
-/* REDUCE MOTION */
+/* ABOUT MODAL */
+.modal{
+  position:fixed;
+  inset:0;
+  display:none;
+  z-index:50;
+}
+.modal.active{ display:block; }
+
+.backdrop{
+  position:absolute;
+  inset:0;
+  background: rgba(0,0,0,.45);
+}
+
+.panel{
+  position:absolute;
+  inset:0;
+  background: var(--bg);
+  color: var(--fg);
+  padding: 28px var(--pad);
+  overflow:auto;
+}
+
+.panel-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid var(--line);
+  padding-bottom:14px;
+  margin-bottom:16px;
+}
+
+.close{
+  font-size:11px;
+  letter-spacing:.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background:none;
+  border:0;
+  cursor:pointer;
+}
+
+.about-text{
+  max-width:560px;
+  font-size:14px;
+  line-height:1.7;
+  opacity:.85;
+}
+
+/* Reduce motion */
 @media (prefers-reduced-motion: reduce){
-  .building{ animation:none; }
-  .tile img,
-  .tile::after,
-  .overlay{ transition:none; }
+  .building{ animation:none; opacity:1; }
+  .tile img, .tile::after, .overlay{ transition:none; }
 }
 </style>
 </head>
 
 <body>
-
 <header>
   <div class="label building">БУДУЕЦЦА</div>
   <div class="right">
-    <button class="about">ABOUT</button>
+    <button class="about" type="button" onclick="openAbout()">ABOUT</button>
     <a href="/" class="name">ILYA SKARYNA</a>
   </div>
 </header>
 
 <main>
   <div class="grid">
-
     <!-- 30 tiles for composition preview -->
-    <button class="tile"><img src="img/project-05-cover.webp"><div class="overlay">PROJECT 30</div></button>
-    <button class="tile"><img src="img/project-04-cover.webp"><div class="overlay">PROJECT 29</div></button>
-    <button class="tile"><img src="img/project-03-cover.webp"><div class="overlay">PROJECT 28</div></button>
-    <button class="tile"><img src="img/project-02-cover.webp"><div class="overlay">PROJECT 27</div></button>
+    <button class="tile" type="button"><img src="img/project-05-cover.webp" alt="Project 30"><div class="overlay">PROJECT 30</div></button>
+    <button class="tile" type="button"><img src="img/project-04-cover.webp" alt="Project 29"><div class="overlay">PROJECT 29</div></button>
+    <button class="tile" type="button"><img src="img/project-03-cover.webp" alt="Project 28"><div class="overlay">PROJECT 28</div></button>
+    <button class="tile" type="button"><img src="img/project-02-cover.webp" alt="Project 27"><div class="overlay">PROJECT 27</div></button>
 
-    <button class="tile"><img src="img/project-01-cover.webp"><div class="overlay">PROJECT 26</div></button>
-    <button class="tile"><img src="img/project-05-cover.webp"><div class="overlay">PROJECT 25</div></button>
-    <button class="tile"><img src="img/project-04-cover.webp"><div class="overlay">PROJECT 24</div></button>
-    <button class="tile"><img src="img/project-03-cover.webp"><div class="overlay">PROJECT 23</div></button>
+    <button class="tile" type="button"><img src="img/project-01-cover.webp" alt="Project 26"><div class="overlay">PROJECT 26</div></button>
+    <button class="tile" type="button"><img src="img/project-05-cover.webp" alt="Project 25"><div class="overlay">PROJECT 25</div></button>
+    <button class="tile" type="button"><img src="img/project-04-cover.webp" alt="Project 24"><div class="overlay">PROJECT 24</div></button>
+    <button class="tile" type="button"><img src="img/project-03-cover.webp" alt="Project 23"><div class="overlay">PROJECT 23</div></button>
 
-    <button class="tile"><img src="img/project-02-cover.webp"><div class="overlay">PROJECT 22</div></button>
-    <button class="tile"><img src="img/project-01-cover.webp"><div class="overlay">PROJECT 21</div></button>
-    <button class="tile"><img src="img/project-05-cover.webp"><div class="overlay">PROJECT 20</div></button>
-    <button class="tile"><img src="img/project-04-cover.webp"><div class="overlay">PROJECT 19</div></button>
+    <button class="tile" type="button"><img src="img/project-02-cover.webp" alt="Project 22"><div class="overlay">PROJECT 22</div></button>
+    <button class="tile" type="button"><img src="img/project-01-cover.webp" alt="Project 21"><div class="overlay">PROJECT 21</div></button>
+    <button class="tile" type="button"><img src="img/project-05-cover.webp" alt="Project 20"><div class="overlay">PROJECT 20</div></button>
+    <button class="tile" type="button"><img src="img/project-04-cover.webp" alt="Project 19"><div class="overlay">PROJECT 19</div></button>
 
+    <button class="tile" type="button"><img src="img/project-03-cover.webp" alt="Project 18"><div class="overlay">PROJECT 18</div></button>
+    <button class="tile" type="button"><img src="img/project-02-cover.webp" alt="Project 17"><div class="overlay">PROJECT 17</div></button>
+    <button class="tile" type="button"><img src="img/project-01-cover.webp" alt="Project 16"><div class="overlay">PROJECT 16</div></button>
+    <button class="tile" type="button"><img src="img/project-05-cover.webp" alt="Project 15"><div class="overlay">PROJECT 15</div></button>
+
+    <button class="tile" type="button"><img src="img/project-04-cover.webp" alt="Project 14"><div class="overlay">PROJECT 14</div></button>
+    <button class="tile" type="button"><img src="img/project-03-cover.webp" alt="Project 13"><div class="overlay">PROJECT 13</div></button>
+    <button class="tile" type="button"><img src="img/project-02-cover.webp" alt="Project 12"><div class="overlay">PROJECT 12</div></button>
+    <button class="tile" type="button"><img src="img/project-01-cover.webp" alt="Project 11"><div class="overlay">PROJECT 11</div></button>
+
+    <button class="tile" type="button"><img src="img/project-05-cover.webp" alt="Project 10"><div class="overlay">PROJECT 10</div></button>
+    <button class="tile" type="button"><img src="img/project-04-cover.webp" alt="Project 09"><div class="overlay">PROJECT 09</div></button>
+    <button class="tile" type="button"><img src="img/project-03-cover.webp" alt="Project 08"><div class="overlay">PROJECT 08</div></button>
+    <button class="tile" type="button"><img src="img/project-02-cover.webp" alt="Project 07"><div class="overlay">PROJECT 07</div></button>
+
+    <button class="tile" type="button"><img src="img/project-01-cover.webp" alt="Project 06"><div class="overlay">PROJECT 06</div></button>
+    <button class="tile" type="button"><img src="img/project-05-cover.webp" alt="Project 05"><div class="overlay">PROJECT 05</div></button>
+    <button class="tile" type="button"><img src="img/project-04-cover.webp" alt="Project 04"><div class="overlay">PROJECT 04</div></button>
+    <button class="tile" type="button"><img src="img/project-03-cover.webp" alt="Project 03"><div class="overlay">PROJECT 03</div></button>
+
+    <button class="tile" type="button"><img src="img/project-02-cover.webp" alt="Project 02"><div class="overlay">PROJECT 02</div></button>
+    <button class="tile" type="button"><img src="img/project-01-cover.webp" alt="Project 01"><div class="overlay">PROJECT 01</div></button>
   </div>
 </main>
+
+<!-- ABOUT MODAL -->
+<div class="modal" id="aboutModal" role="dialog" aria-modal="true" aria-label="About">
+  <div class="backdrop" onclick="closeAbout()"></div>
+  <div class="panel">
+    <div class="panel-top">
+      <div class="name">ILYA SKARYNA</div>
+      <button class="close" type="button" onclick="closeAbout()">CLOSE</button>
+    </div>
+
+    <div class="about-text">
+      Artist.<br><br>
+      (тут потом добавишь описание, контакты, ссылки)
+    </div>
+  </div>
+</div>
+
+<script>
+  const about = document.getElementById('aboutModal');
+
+  function openAbout(){
+    about.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeAbout(){
+    about.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && about.classList.contains('active')) closeAbout();
+  });
+</script>
 
 </body>
 </html>
